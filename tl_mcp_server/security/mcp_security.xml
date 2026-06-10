@@ -3,7 +3,10 @@
     <data noupdate="0">
         <record id="group_mcp_admin" model="res.groups">
             <field name="name">Manager MCP Server</field>
-            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('group_mcp_admin'))]"/>
         </record>
     </data>
 </odoo>
