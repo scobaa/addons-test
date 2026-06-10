@@ -4,6 +4,7 @@ import hashlib
 import base64
 import werkzeug
 from datetime import timedelta
+from urllib.parse import urlencode, quote
 from odoo import http, fields
 from odoo.http import request, Response
 
@@ -23,23 +24,38 @@ class OAuthController(http.Controller):
         }
         return Response(json.dumps(metadata), content_type='application/json')
 
-    @http.route('/oauth/authorize', type='http', auth='none', methods=['GET'], csrf=False, cors='*')
+    @http.route('/oauth/authorize', type='http', auth='none', methods=['GET', 'POST'], csrf=False, cors='*')
     def oauth_authorize(self, **kwargs):
         client_id = kwargs.get('client_id')
         redirect_uri = kwargs.get('redirect_uri')
-        response_type = kwargs.get('response_type')
         state = kwargs.get('state')
         code_challenge = kwargs.get('code_challenge')
-        code_challenge_method = kwargs.get('code_challenge_method')
-        scope = kwargs.get('scope')
+        code_challenge_method = kwargs.get('code_challenge_method', 'plain')
 
-        # Check if user is logged in
-        public_user = request.env.ref('base.public_user').id
-        if not request.env.user or request.env.user.id == public_user:
-            # Reconstruct current url safely
-            query_string = request.httprequest.query_string.decode('utf-8')
-            redirect_url = f"/web/login?redirect=/oauth/authorize?{query_string}"
-            return werkzeug.utils.redirect(redirect_url)
+        # Check if user is logged in via session
+        uid = request.session.uid
+        if not uid or uid == request.env.ref('base.public_user').id:
+            # Store OAuth params in session so we can recover them after login
+            request.session['oauth_params'] = {
+                'client_id': client_id,
+                'redirect_uri': redirect_uri,
+                'state': state,
+                'code_challenge': code_challenge,
+                'code_challenge_method': code_challenge_method,
+            }
+            return werkzeug.utils.redirect('/web/login')
+
+        # Recover params from session if not in kwargs (post-login redirect)
+        if not client_id:
+            oauth_params = request.session.pop('oauth_params', {})
+            client_id = oauth_params.get('client_id')
+            redirect_uri = oauth_params.get('redirect_uri')
+            state = oauth_params.get('state')
+            code_challenge = oauth_params.get('code_challenge')
+            code_challenge_method = oauth_params.get('code_challenge_method', 'plain')
+
+        if not client_id or not redirect_uri:
+            return Response("Missing client_id or redirect_uri", status=400)
 
         # Validate client
         client = request.env['mcp.oauth.client'].sudo().search([
@@ -49,12 +65,12 @@ class OAuthController(http.Controller):
         if not client:
             return Response("Invalid client_id", status=400)
 
-        # Generate code
+        # Generate authorization code
         code = secrets.token_hex(32)
         request.env['mcp.oauth.code'].sudo().create({
             'code': code,
             'client_id': client_id,
-            'user_id': request.env.user.id,
+            'user_id': uid,
             'expires_at': fields.Datetime.now() + timedelta(minutes=10),
             'redirect_uri': redirect_uri,
             'state': state,
@@ -63,17 +79,16 @@ class OAuthController(http.Controller):
         })
 
         # Redirect back to client
-        separator = '&' if redirect_uri and '?' in redirect_uri else '?'
-        final_redirect = f"{redirect_uri}{separator}code={code}"
+        params = {'code': code}
         if state:
-            final_redirect += f"&state={state}"
-
+            params['state'] = state
+        separator = '&' if '?' in redirect_uri else '?'
+        final_redirect = redirect_uri + separator + urlencode(params)
         return werkzeug.utils.redirect(final_redirect)
 
     @http.route('/oauth/token', type='http', auth='none', methods=['POST'], csrf=False, cors='*')
     def oauth_token(self, **kwargs):
-        # Allow both JSON and Form data
-        params = kwargs
+        params = dict(kwargs)
         if request.httprequest.data:
             try:
                 json_data = json.loads(request.httprequest.data.decode('utf-8'))
@@ -89,7 +104,6 @@ class OAuthController(http.Controller):
         if grant_type != 'authorization_code':
             return self._json_error("unsupported_grant_type")
 
-        # Find code
         auth_code = request.env['mcp.oauth.code'].sudo().search([
             ('code', '=', code_str),
             ('client_id', '=', client_id),
@@ -102,23 +116,22 @@ class OAuthController(http.Controller):
         if auth_code.expires_at and auth_code.expires_at < fields.Datetime.now():
             return self._json_error("invalid_grant", "Code expired")
 
-        # Verify PKCE
+        # Verify PKCE if present
         if auth_code.code_challenge:
             if not code_verifier:
                 return self._json_error("invalid_request", "Missing code_verifier")
-                
             if auth_code.code_challenge_method == 'S256':
-                challenge = base64.urlsafe_b64encode(hashlib.sha256(code_verifier.encode()).digest()).rstrip(b'=').decode()
+                challenge = base64.urlsafe_b64encode(
+                    hashlib.sha256(code_verifier.encode()).digest()
+                ).rstrip(b'=').decode()
                 if challenge != auth_code.code_challenge:
                     return self._json_error("invalid_grant", "Code verifier mismatch")
             else:
                 if code_verifier != auth_code.code_challenge:
                     return self._json_error("invalid_grant", "Code verifier mismatch")
 
-        # Mark as used
         auth_code.sudo().write({'used': True})
 
-        # Generate Token
         access_token = secrets.token_hex(32)
         request.env['mcp.oauth.token'].sudo().create({
             'access_token': access_token,
