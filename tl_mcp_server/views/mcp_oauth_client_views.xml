@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mcp_oauth_client_list" model="ir.ui.view">
+        <field name="name">mcp.oauth.client.list</field>
+        <field name="model">mcp.oauth.client</field>
+        <field name="arch" type="xml">
+            <list string="OAuth Clients">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="user_id"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mcp_oauth_client_form" model="ir.ui.view">
+        <field name="name">mcp.oauth.client.form</field>
+        <field name="model">mcp.oauth.client</field>
+        <field name="arch" type="xml">
+            <form string="OAuth Client">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="user_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="client_id" readonly="1" widget="CopyClipboardChar" invisible="not id"/>
+                            <field name="client_secret" readonly="1" widget="CopyClipboardChar" invisible="not id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mcp_oauth_client" model="ir.actions.act_window">
+        <field name="name">OAuth Clients</field>
+        <field name="res_model">mcp.oauth.client</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_mcp_oauth_client" 
+              name="OAuth Clients" 
+              parent="menu_mcp_root" 
+              action="action_mcp_oauth_client" 
+              sequence="15"/>
+</odoo>

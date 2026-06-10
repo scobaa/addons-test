@@ -1,6 +1,6 @@
 import json
 import logging
-from odoo import http
+from odoo import http, fields
 from odoo.http import request, Response
 from odoo.exceptions import AccessDenied, AccessError
 
@@ -24,8 +24,27 @@ class McpController(http.Controller):
             raise AccessDenied("Missing or invalid Authorization header.")
         
         token = auth_header.split(' ')[1]
-        api_key = request.env['mcp.api.key'].sudo()._authenticate(token)
-        return api_key
+        
+        # Primero buscar en mcp.api.key (tokens estáticos)
+        api_key = request.env['mcp.api.key'].sudo()._authenticate_silent(token)
+        if api_key:
+            return api_key
+            
+        # Luego buscar en mcp.oauth.token (tokens OAuth)
+        oauth_token = request.env['mcp.oauth.token'].sudo().search([
+            ('access_token', '=', token),
+            ('active', '=', True)
+        ], limit=1)
+        
+        if not oauth_token:
+            raise AccessDenied("Invalid or expired token.")
+            
+        if oauth_token.expires_at and oauth_token.expires_at < fields.Datetime.now():
+            raise AccessDenied("Token expired.")
+            
+        # Actualizar timestamp
+        oauth_token.sudo().write({'active': True})
+        return oauth_token
 
     def _check_model_access(self, api_key, model_name, operation):
         """

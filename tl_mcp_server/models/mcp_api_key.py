@@ -31,4 +31,11 @@ class McpApiKey(models.Model):
         if not api_key:
             raise AccessDenied("Invalid or inactive API Key.")
         api_key.sudo().write({'last_used': fields.Datetime.now()})
-        return api_key
+    @api.model
+    def _authenticate_silent(self, token):
+        if not token:
+            return False
+        api_key = self.sudo().search([('token', '=', token), ('active', '=', True)], limit=1)
+        if api_key:
+            api_key.sudo().write({'last_used': fields.Datetime.now()})
+        return api_key or False

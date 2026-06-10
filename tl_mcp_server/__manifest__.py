@@ -12,6 +12,7 @@
         "views/mcp_menus.xml",
         "views/mcp_api_key_views.xml",
         "views/mcp_model_access_views.xml",
+        "views/mcp_oauth_client_views.xml",
     ],
     "installable": True,
     "application": False,
