@@ -4,12 +4,12 @@
         <field name="name">mcp.api.key.tree</field>
         <field name="model">mcp.api.key</field>
         <field name="arch" type="xml">
-            <tree string="API Keys">
+            <list string="API Keys">
                 <field name="name"/>
                 <field name="user_id"/>
                 <field name="last_used"/>
                 <field name="active" widget="boolean_toggle"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -36,13 +36,13 @@
                     <notebook>
                         <page string="Model Access">
                             <field name="model_access_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="model_id" options="{'no_create': True}"/>
                                     <field name="can_read"/>
                                     <field name="can_write"/>
                                     <field name="can_create"/>
                                     <field name="can_delete"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Notes">
@@ -57,7 +57,7 @@
     <record id="action_mcp_api_key" model="ir.actions.act_window">
         <field name="name">API Keys</field>
         <field name="res_model">mcp.api.key</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_mcp_api_key" 
