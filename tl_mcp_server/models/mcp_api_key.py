@@ -12,8 +12,7 @@ class McpApiKey(models.Model):
     active = fields.Boolean('Active', default=True)
     last_used = fields.Datetime('Last Used', readonly=True)
     note = fields.Text('Notes')
-    
-    # Model access relation
+
     model_access_ids = fields.One2many('mcp.model.access', 'api_key_id', string='Model Access')
 
     @api.model_create_multi
@@ -31,6 +30,8 @@ class McpApiKey(models.Model):
         if not api_key:
             raise AccessDenied("Invalid or inactive API Key.")
         api_key.sudo().write({'last_used': fields.Datetime.now()})
+        return api_key
+
     @api.model
     def _authenticate_silent(self, token):
         if not token:
