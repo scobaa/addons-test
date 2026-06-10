@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mcp_model_access_tree" model="ir.ui.view">
+        <field name="name">mcp.model.access.tree</field>
+        <field name="model">mcp.model.access</field>
+        <field name="arch" type="xml">
+            <tree string="Model Access" editable="bottom">
+                <field name="api_key_id"/>
+                <field name="model_id" options="{'no_create': True}"/>
+                <field name="can_read"/>
+                <field name="can_write"/>
+                <field name="can_create"/>
+                <field name="can_delete"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_mcp_model_access" model="ir.actions.act_window">
+        <field name="name">Model Access</field>
+        <field name="res_model">mcp.model.access</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem id="menu_mcp_model_access" 
+              name="Model Access" 
+              parent="menu_mcp_root" 
+              action="action_mcp_model_access" 
+              sequence="20"/>
+</odoo>
