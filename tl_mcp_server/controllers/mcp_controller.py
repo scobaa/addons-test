@@ -103,7 +103,22 @@ class McpController(http.Controller):
             return self._json_response(error={"code": -32603, "message": str(e)}, id=req_id)
 
     def _dispatch(self, env, api_key, method, params):
-        if method == 'tools/list':
+        if method == 'initialize':
+            return {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {
+                    "tools": {}
+                },
+                "serverInfo": {
+                    "name": "Odoo MCP Server",
+                    "version": "1.0.0"
+                }
+            }
+        elif method == 'notifications/initialized':
+            return {}
+        elif method == 'ping':
+            return {}
+        elif method == 'tools/list':
             return self._tools_list()
         elif method == 'tools/call':
             tool_name = params.get('name')
