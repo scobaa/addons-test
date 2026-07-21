@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Breadcrumb
+    ============================================================ -->
+    <template id="portal_my_home_menu_regularization"
+        inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'hr_regularization' or reg_record">
+                <a t-if="not reg_record" href="/my/regularization">
+                    <strong>Regularización de asistencia</strong>
+                </a>
+                <t t-elif="reg_record">
+                    <a href="/my/regularization">Regularización de asistencia</a>
+                    <span> / </span>
+                    <t t-esc="reg_record.employee_id.name"/>
+                </t>
+            </li>
+        </xpath>
+    </template>
+
+    <!-- ============================================================
+         Tarjeta en el home del portal
+    ============================================================ -->
+    <template id="portal_my_home_regularization"
+        customize_show="True"
+        inherit_id="portal.portal_my_home" priority="25">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Regularización de asistencia</t>
+                <t t-set="url" t-value="'/my/regularization'"/>
+                <t t-set="icon"  t-value="'/dh_attendance_regularization_portal/static/src/img/logoRegu.png'"/>
+                <t t-set="placeholder_count" t-value="'regularization_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ============================================================
+         Lista de solicitudes
+    ============================================================ -->
+    <template id="portal_my_regularization" name="Mis regularizaciones">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Regularización de asistencia</t>
+            </t>
+
+            <t t-if="not request.env.user.sudo().employee_id">
+                <div class="alert alert-warning mt-3">
+                    <p>No estás vinculado a ningún perfil de empleado. Contacta al administrador.</p>
+                </div>
+            </t>
+
+            <t t-else="">
+                <t t-if="not grouped_records or not grouped_records[0]">
+                    <div class="mt-3">
+                        <p>No tienes solicitudes de regularización.</p>
+                        <a href="/my/regularization/create" class="btn btn-primary">
+                            Nueva solicitud
+                        </a>
+                    </div>
+                </t>
+
+                <t t-if="grouped_records and grouped_records[0]"
+                   t-call="portal.portal_table">
+                    <t t-foreach="grouped_records" t-as="reg_group">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th class="text-center">Fecha inicio</th>
+                                <th class="text-center">Fecha fin</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tr t-if="groupby == 'none'">
+                            <td colspan="5" class="py-2">
+                                <a href="/my/regularization/create" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-plus"/> Nueva solicitud
+                                </a>
+                            </td>
+                        </tr>
+                        <t t-foreach="reg_group" t-as="reg">
+                            <tr>
+                                <td>
+                                    <a t-att-href="'/my/regularization/%d' % reg.id">
+                                        <t t-esc="reg.reg_category.type or 'Sin categoría'"/>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <t t-esc="fmt_dt(reg.from_date)"/>
+                                </td>
+                                <td class="text-center">
+                                    <t t-esc="fmt_dt(reg.to_date)"/>
+                                </td>
+                                <td class="text-center">
+                                    <t t-set="badge_class" t-value="'secondary'"/>
+                                    <t t-if="reg.state_select == 'draft'" t-set="badge_class" t-value="'secondary'"/>
+                                    <t t-if="reg.state_select == 'requested'" t-set="badge_class" t-value="'info'"/>
+                                    <t t-if="reg.state_select == 'approved'" t-set="badge_class" t-value="'success'"/>
+                                    <t t-if="reg.state_select == 'reject'" t-set="badge_class" t-value="'danger'"/>
+                                    <span t-attf-class="badge badge-#{badge_class}">
+                                        <t t-esc="state_labels.get(reg.state_select, reg.state_select)"/>
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <t t-if="reg.state_select == 'draft'">
+                                        <a t-att-href="'/my/regularization/edit/%d' % reg.id"
+                                           class="btn btn-sm btn-secondary mr-1" title="Editar">
+                                            <i class="fa fa-pencil"/>
+                                        </a>
+                                        <a t-att-href="'/my/regularization/submit/%d' % reg.id"
+                                           class="btn btn-sm btn-primary mr-1" title="Enviar">
+                                            <i class="fa fa-paper-plane"/>
+                                        </a>
+                                        <button type="button"
+                                            class="btn btn-sm btn-danger"
+                                            data-toggle="modal"
+                                            t-att-data-target="'#deleteModal' + str(reg.id)"
+                                            title="Eliminar">
+                                            <i class="fa fa-trash"/>
+                                        </button>
+                                        <!-- Modal de confirmación de borrado -->
+                                        <div t-att-id="'deleteModal' + str(reg.id)"
+                                             class="modal fade" tabindex="-1" role="dialog">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Confirmar eliminación</h5>
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span>&#215;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>¿Estás seguro de que deseas eliminar esta solicitud?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                        <a t-att-href="'/my/regularization/delete/%d' % reg.id"
+                                                           class="btn btn-danger">Eliminar</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <a t-att-href="'/my/regularization/%d' % reg.id"
+                                           class="btn btn-sm btn-secondary" title="Ver detalle">
+                                            <i class="fa fa-eye"/>
+                                        </a>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================================================
+         Formulario de creación
+    ============================================================ -->
+    <template id="portal_regularization_create" name="Portal: crear regularización">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <form method="GET" action="/my/regularization/create">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h5 class="mb-0">Nueva solicitud de regularización</h5>
+                            <div>
+                                <a href="/my/regularization" class="btn btn-danger btn-sm">
+                                    Cancelar
+                                </a>
+                                <button type="submit" name="button_save" value="save"
+                                    class="btn btn-primary btn-sm">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Empleado</label>
+                                    <input type="text" class="form-control"
+                                        t-att-value="employee.name" disabled="1"/>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Categoría <span class="text-danger">*</span></label>
+                                    <select name="reg_category" class="form-control" required="1">
+                                        <option value="">-- Selecciona una categoría --</option>
+                                        <t t-foreach="categories" t-as="cat">
+                                            <option t-att-value="cat.id">
+                                                <t t-esc="cat.type"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Fecha inicio <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="from_date"
+                                        class="form-control" required="1"/>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Fecha fin <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="to_date"
+                                        class="form-control" required="1"/>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="font-weight-bold">Motivo <span class="text-danger">*</span></label>
+                                    <textarea name="reg_reason" class="form-control"
+                                        rows="4" required="1"
+                                        placeholder="Describe el motivo de la regularización..."/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================
+         Formulario de edición
+    ============================================================ -->
+    <template id="portal_regularization_edit" name="Portal: editar regularización">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <form t-att-action="'/my/regularization/edit/%d' % reg.id" method="GET">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h5 class="mb-0">Editar solicitud de regularización</h5>
+                            <div>
+                                <a href="/my/regularization" class="btn btn-danger btn-sm">
+                                    Cancelar
+                                </a>
+                                <button type="submit" name="button_save" value="save"
+                                    class="btn btn-primary btn-sm">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Empleado</label>
+                                    <input type="text" class="form-control"
+                                        t-att-value="reg.employee_id.name" disabled="1"/>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Categoría <span class="text-danger">*</span></label>
+                                    <select name="reg_category" class="form-control" required="1">
+                                        <t t-foreach="categories" t-as="cat">
+                                            <option t-att-value="cat.id"
+                                                t-att-selected="'selected' if cat.id == reg.reg_category.id else None">
+                                                <t t-esc="cat.type"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Fecha inicio <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="from_date"
+                                        class="form-control" required="1"
+                                        t-att-value="from_date_local"/>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="font-weight-bold">Fecha fin <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="to_date"
+                                        class="form-control" required="1"
+                                        t-att-value="to_date_local"/>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="font-weight-bold">Motivo <span class="text-danger">*</span></label>
+                                    <textarea name="reg_reason" class="form-control"
+                                        rows="4" required="1">
+                                        <t t-esc="reg.reg_reason"/>
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================
+         Vista de detalle (solo lectura)
+    ============================================================ -->
+    <template id="portal_regularization_detail" name="Portal: detalle regularización">
+        <t t-call="portal.portal_layout">
+            <t t-set="reg_record" t-value="reg"/>
+            <div class="container mt-4">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Detalle de regularización</h5>
+                        <a href="/my/regularization" class="btn btn-secondary btn-sm">
+                            <i class="fa fa-arrow-left"/> Volver
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6 col-12">
+                                <label class="font-weight-bold">Empleado</label>
+                                <p class="form-control-plaintext">
+                                    <t t-esc="reg.employee_id.name"/>
+                                </p>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="font-weight-bold">Categoría</label>
+                                <p class="form-control-plaintext">
+                                    <t t-esc="reg.reg_category.type or 'Sin categoría'"/>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 col-12">
+                                <label class="font-weight-bold">Fecha inicio</label>
+                                <p class="form-control-plaintext">
+                                    <t t-esc="fmt_dt(reg.from_date) or '-'"/>
+                                </p>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="font-weight-bold">Fecha fin</label>
+                                <p class="form-control-plaintext">
+                                    <t t-esc="fmt_dt(reg.to_date) or '-'"/>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="font-weight-bold">Motivo</label>
+                                <p class="form-control-plaintext">
+                                    <t t-esc="reg.reg_reason"/>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 col-12">
+                                <label class="font-weight-bold">Estado</label>
+                                <p class="form-control-plaintext">
+                                    <t t-set="badge_class" t-value="'secondary'"/>
+                                    <t t-if="reg.state_select == 'requested'" t-set="badge_class" t-value="'info'"/>
+                                    <t t-if="reg.state_select == 'approved'" t-set="badge_class" t-value="'success'"/>
+                                    <t t-if="reg.state_select == 'reject'" t-set="badge_class" t-value="'danger'"/>
+                                    <span t-attf-class="badge badge-#{badge_class}">
+                                        <t t-esc="state_labels.get(reg.state_select, reg.state_select)"/>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <t t-if="reg.state_select == 'draft'">
+                            <div class="row">
+                                <div class="col-12">
+                                    <a t-att-href="'/my/regularization/edit/%d' % reg.id"
+                                       class="btn btn-secondary mr-2">
+                                        <i class="fa fa-pencil"/> Editar
+                                    </a>
+                                    <a t-att-href="'/my/regularization/submit/%d' % reg.id"
+                                       class="btn btn-primary">
+                                        <i class="fa fa-paper-plane"/> Enviar a aprobación
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Chatter / historial de mensajes -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Historial de comunicación</h6>
+                    </div>
+                    <div class="card-body">
+                        <t t-set="object" t-value="reg"/>
+                        <t t-call="portal.message_thread"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================
+         Acceso denegado
+    ============================================================ -->
+    <template id="portal_regularization_access_denied" name="Portal: acceso denegado">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">Acceso denegado</h4>
+                    <p>No tienes permiso para ver o modificar esta solicitud.</p>
+                    <a href="/my/regularization" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"/> Volver a mis solicitudes
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
