@@ -1,0 +1,17 @@
+<odoo>
+    <record id="tl_survey_survey_form_view_inherit_custom_documents" model="ir.ui.view">
+        <field name="name">tl.survey.survey.form.view.inherit</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='restrict_user_ids']" position="after">
+                <field name="crear_lead"/>
+                <field name="team_id" invisible="not crear_lead" required="crear_lead"/>
+                <field name="source_id" invisible="not crear_lead" required="false"/>
+                <field name="campaign_id" invisible="not crear_lead" required="false"/>
+                <field name="medium_id" invisible="not crear_lead" required="false"/>
+                <field name="user_id" invisible="not crear_lead" required="false"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
