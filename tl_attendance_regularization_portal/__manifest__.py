@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Attendance Regularization Portal',
+    'name': 'Portal de Regularización de Asistencia',
     'version': '19.0.1.0.0',
-    'category': 'Human Resource',
+    'category': 'Asistencias',
     'summary': 'Portal para que los empleados gestionen sus regularizaciones de asistencia',
     'description': 'Permite a los empleados con acceso portal crear, enviar y consultar solicitudes de regularización de asistencia.',
-    'author': 'Datahat Solutions LLP',
+    'author': 'Tecniloop',
+    'maintainer': 'Tecniloop',
+    'website': 'http://www.tecniloop.es',
+    'license': 'AGPL-3',
     'depends': [
         'base',
         'portal',
@@ -19,10 +22,9 @@
     'assets': {
         'web.assets_frontend': [
             # 'dh_attendance_regularization_portal/static/src/css/regularization_portal.css',
-            'dh_attendance_regularization_portal/static/src/js/regularization_portal.js',
+            'tl_attendance_regularization_portal/static/src/js/regularization_portal.js',
         ],
     },
-    'license': 'LGPL-3',
     'installable': True,
     'auto_install': False,
     'application': False,
