@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="hortizontal_report" model="report.paperformat">
+        <field name="name">Horitzontal</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">15</field>  
+        <field name="header_spacing">15</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="dpi">90</field>
+    </record>
+
+
+    <record id="hr_employee_report" model="ir.actions.report">
+        <field name="name">Informe de Empleados</field>
+        <field name="model">hr.employee</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">tl_hr_attendance.hr_employee</field>
+        <field name="report_file">tl_hr_attendance.hr_employee</field>
+        <field name="print_report_name">
+            'Attendance Report' + ' - ' + time.strftime('%Y-%m-%d')
+        </field>
+        <field name="binding_model_id" ref="hr.model_hr_employee" />
+        <field name="paperformat_id" ref="tl_hr_attendance.hortizontal_report"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="tl_hr_attendance.hr_employee">
+        <t t-call="web.html_container">
+            <t t-call="tl_hr_attendance.hr_employee_template" />
+        </t>
+    </template>
+
+    <template id="hr_employee_template">
+        <t t-call="web.internal_layout">
+            <div class="page" style="font-size: 14px !important;">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th><strong>Empleado</strong></th>
+                            <th><strong>Asistencia</strong></th>
+                            <th><strong>Entrada</strong></th>
+                            <th><strong>Ubicación</strong></th>
+                            <th><strong>Vacaciones</strong></th>
+                            <th><strong>Estado</strong></th>
+                            <th><strong>Motivo Ausencia</strong></th>
+                            <th><strong>Tipo Ausencia</strong></th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs.get_attendance_status_today()" t-as="emp">
+                            <tr t-attf-style="background-color: #{'lightgreen' if emp['has_attendance'] else ('#fff3cd' if emp['has_leave'] else '#f8d7da')}">
+                                <td><t t-esc="emp['name']"/></td>
+                                <td><t t-esc="'Sí' if emp['has_attendance'] else 'No'"/></td>
+                                <td><t t-esc="emp['check_in'] if emp['check_in'] else ''"/></td>
+                                <td>
+                                    <a t-if="emp['location_link']" t-att-href="emp['location_link']" target="_blank">
+                                        <span t-esc="emp['location_name']"/>
+                                    </a>
+                                    <span t-if="not emp['location_link']" t-esc="emp['location_name']"/>
+                                </td>
+
+                                <td><t t-esc="'Sí' if emp['has_leave'] else 'No'"/></td>
+                                <td>
+                                    <link href="https://fonts.googleapis.com/css?family=Noto+Emoji" rel="stylesheet" />
+                                    <span style="font-family: 'Noto Emoji';"></span>
+                                    <t t-if="emp['has_attendance']">✔ Fichado</t>
+                                    <t t-elif="emp['has_leave']">✈ Ausencia</t>
+                                    <t t-else="">✖ No fichado</t>
+                                </td>
+                                <td><t t-esc="emp['leave_type'] if emp['leave_type'] else ''"/></td>
+                                <td><t t-esc="emp['leave_mode']"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div> 
+        </t>
+    </template>
+</odoo>

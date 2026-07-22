@@ -10,7 +10,7 @@
     "license": "AGPL-3",
     
     'category': 'Events',
-    "depends": ['event','website_event','mass_mailing', 'survey'],
+    "depends": ['event','website_event','mass_mailing', 'su rvey'],
     "data": [
         "views/registration_event_view.xml",
         "views/survey_survey_inherit.xml",
