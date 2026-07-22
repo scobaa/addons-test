@@ -6,10 +6,14 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form" />
         <field name="arch" type="xml">
-            <field name="user_id" position="after">
-                <field name="is_exempt_employee"/>
-                <field name="flexible_hours"/>
-            </field>    
+            <page name="work_information" position="before">
+                <page string="Asistencias" name="asistencias">
+                    <group>
+                        <field name="is_exempt_employee"/>
+                        <field name="flexible_hours"/>
+                    </group>
+                </page>
+            </page>    
         </field>
     </record>
         
