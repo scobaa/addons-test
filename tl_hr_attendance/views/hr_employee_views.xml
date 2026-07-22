@@ -6,7 +6,7 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form" />
         <field name="arch" type="xml">
-            <field name="tz" position="after">
+            <field name="user_id" position="after">
                 <field name="is_exempt_employee"/>
                 <field name="flexible_hours"/>
             </field>    
