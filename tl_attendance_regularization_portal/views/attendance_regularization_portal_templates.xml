@@ -30,7 +30,7 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Regularización de asistencia</t>
                 <t t-set="url" t-value="'/my/regularization'"/>
-                <t t-set="icon"  t-value="'/dh_attendance_regularization_portal/static/src/img/logoRegu.png'"/>
+                <t t-set="icon"  t-value="'/tl_attendance_regularization_portal/static/src/img/logoRegu.png'"/>
                 <t t-set="placeholder_count" t-value="'regularization_count'"/>
             </t>
         </xpath>
@@ -96,16 +96,16 @@
                                 </td>
                                 <td class="text-center">
                                     <t t-set="badge_class" t-value="'secondary'"/>
-                                    <t t-if="reg.state_select == 'draft'" t-set="badge_class" t-value="'secondary'"/>
-                                    <t t-if="reg.state_select == 'requested'" t-set="badge_class" t-value="'info'"/>
-                                    <t t-if="reg.state_select == 'approved'" t-set="badge_class" t-value="'success'"/>
-                                    <t t-if="reg.state_select == 'reject'" t-set="badge_class" t-value="'danger'"/>
+                                    <t t-if="reg.state == 'draft'" t-set="badge_class" t-value="'secondary'"/>
+                                    <t t-if="reg.state == 'requested'" t-set="badge_class" t-value="'info'"/>
+                                    <t t-if="reg.state == 'approved'" t-set="badge_class" t-value="'success'"/>
+                                    <t t-if="reg.state == 'reject'" t-set="badge_class" t-value="'danger'"/>
                                     <span t-attf-class="badge badge-#{badge_class}">
-                                        <t t-esc="state_labels.get(reg.state_select, reg.state_select)"/>
+                                        <t t-esc="state_labels.get(reg.state, reg.state)"/>
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <t t-if="reg.state_select == 'draft'">
+                                    <t t-if="reg.state == 'draft'">
                                         <a t-att-href="'/my/regularization/edit/%d' % reg.id"
                                            class="btn btn-sm btn-secondary mr-1" title="Editar">
                                             <i class="fa fa-pencil"/>
@@ -351,16 +351,16 @@
                                 <label class="font-weight-bold">Estado</label>
                                 <p class="form-control-plaintext">
                                     <t t-set="badge_class" t-value="'secondary'"/>
-                                    <t t-if="reg.state_select == 'requested'" t-set="badge_class" t-value="'info'"/>
-                                    <t t-if="reg.state_select == 'approved'" t-set="badge_class" t-value="'success'"/>
-                                    <t t-if="reg.state_select == 'reject'" t-set="badge_class" t-value="'danger'"/>
+                                    <t t-if="reg.state == 'requested'" t-set="badge_class" t-value="'info'"/>
+                                    <t t-if="reg.state == 'approved'" t-set="badge_class" t-value="'success'"/>
+                                    <t t-if="reg.state == 'reject'" t-set="badge_class" t-value="'danger'"/>
                                     <span t-attf-class="badge badge-#{badge_class}">
-                                        <t t-esc="state_labels.get(reg.state_select, reg.state_select)"/>
+                                        <t t-esc="state_labels.get(reg.state, reg.state)"/>
                                     </span>
                                 </p>
                             </div>
                         </div>
-                        <t t-if="reg.state_select == 'draft'">
+                        <t t-if="reg.state == 'draft'">
                             <div class="row">
                                 <div class="col-12">
                                     <a t-att-href="'/my/regularization/edit/%d' % reg.id"
