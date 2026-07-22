@@ -50,39 +50,27 @@ class AttendanceRegular(models.Model):
     employee_id = fields.Many2one('hr.employee', string="Employee",
                                   default=_get_employee_id, readonly=True,
                                   required=True, help='Employee')
-    state_select = fields.Selection([('draft', 'Draft'),
+    state = fields.Selection([('draft', 'Draft'),
                                      ('requested', 'Requested'),
                                      ('reject', 'Rejected'),
                                      ('approved', 'Approved')
                                      ], default='draft',
-                                    track_visibility='onchange',
-                                    string='State', help='State')
+                                    string='State', help='State', tracking=True)
 
-    def action_submit_reg(self):
+    def action_submit(self):
         """Change state to 'requested' upon submission"""
         self.ensure_one()
-        self.sudo().write({
-            'state_select': 'requested'
-        })
-        return
+        self.write({'state': 'requested'})
 
-    def action_regular_approval(self):
+    def action_approve(self):
         """Approve the attendance regularization"""
-        self.write({
-            'state_select': 'approved'
-        })
-        vals = {
+        self.write({'state': 'approved'})
+        self.env['hr.attendance'].sudo().create({
             'check_in': self.from_date,
             'check_out': self.to_date,
             'employee_id': self.employee_id.id,
-            'regularization': True
-        }
-        self.env['hr.attendance'].sudo().create(vals)
-        return
-
-    def action_regular_rejection(self):
-        """Reject the attendance regularization"""
-        self.write({
-            'state_select': 'reject'
         })
-        return
+
+    def action_reject(self):
+        """Reject the attendance regularization"""
+        self.write({'state': 'reject'})

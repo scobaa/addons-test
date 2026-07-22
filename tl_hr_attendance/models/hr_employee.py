@@ -4,12 +4,6 @@ import pytz
 
 SELECCION_PERIODO = {'am': 'Mañana', 'pm': 'Tarde'}
 
-class HrEmployeePublic(models.Model):
-    _inherit = 'hr.employee.public'
-
-    flexible_hours = fields.Boolean(string='Horario flexible', default=False)
-
-
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
