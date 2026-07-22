@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_attendance_regular_portal,access_attendance_regular_portal,attendance_regularization.model_attendance_regular,base.group_portal,1,1,1,1
+access_reg_categories_portal,access_reg_categories_portal,attendance_regularization.model_reg_categories,base.group_portal,1,0,0,0
+access_hr_employee_reg_portal,access_hr_employee_reg_portal,hr.model_hr_employee,base.group_portal,1,0,0,0

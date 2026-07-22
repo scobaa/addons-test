@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <template id="registration_attendee_details_inherit_apen" inherit_id="website_event.registration_attendee_details">
+        <!-- <xpath expr="//div[hasclass('modal-body') and not(contains(@class,'border-top'))]" position="inside">
+            <div class="row mt-2">
+                <div class="col-lg-4">
+                    <label t-attf-for="is_apen_client_#{counter}" class="form-label">¿Eres cliente de APEN?</label>
+                    <select t-attf-name="is_apen_client_#{counter}" t-attf-id="is_apen_client_#{counter}" class="form-select" required="required">
+                        <option value="False">No</option>
+                        <option value="True">Sí</option>
+                    </select>
+                </div>
+            </div>
+        </xpath> -->
+
+        <xpath expr="//div[hasclass('modal-footer')]" position="before">
+            <div class="modal-body border-top bg-light">
+                <div class="form-check">
+                    <input type="checkbox" name="gdpr_accepted" id="gdpr_accepted" class="form-check-input" required="required"/>
+                    <label class="form-check-label" for="gdpr_accepted">
+                        He leído y acepto la <a href="https://www.apen.es/proteccion-de-datos/" target="_blank" style="text-decoration: underline;">política de protección de datos *</a>.
+                    </label>
+                </div>
+
+                <div class="form-check mt-2">
+                    <input type="checkbox" name="subscribe_newsletter_global" id="subscribe_newsletter_global" class="form-check-input"
+                           onchange="const el = document.getElementById('newsletter_lang_div'); if (this.checked) { el.style.maxHeight = '100px'; el.style.opacity = '1'; el.style.marginTop = '0.75rem'; } else { el.style.maxHeight = '0'; el.style.opacity = '0'; el.style.marginTop = '0'; }"/>
+                    <label class="form-check-label" for="subscribe_newsletter_global">
+                        Quiero recibir novedades, contenido exclusivo gratuito y ofertas especiales de APEN.
+                    </label>
+                </div>
+
+                <div id="newsletter_lang_div" class="ps-3" style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;">
+                    <label for="newsletter_lang" class="form-label mb-1" style="font-weight: 500; font-size: 0.9rem; color: #495057;">
+                        Idioma de preferencia / Idioma de preferència:
+                    </label>
+                    <select name="newsletter_lang" id="newsletter_lang" class="form-select w-auto" style="min-width: 180px;">
+                        <option value="es" selected="selected">Español</option>
+                        <option value="ca">Català</option>
+                    </select>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <record id="view_event_registration_form_inherit_apen" model="ir.ui.view">
+        <field name="name">event.registration.form.inherit.apen</field>
+        <field name="model">event.registration</field>
+        <field name="inherit_id" ref="event.view_event_registration_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="is_apen_client"/>
+                <field name="newsletter_accepted"/>
+                <field name="newsletter_lang" invisible="not newsletter_accepted"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- <template id="tl_registration_tree_inherit" inherit_id="event.view_event_registration_tree">
+        <xpath expr="field[@name='state']" position="after">
+            <field name="is_apen_client"/>
+        </xpath>
+    </template> -->
+</odoo>
