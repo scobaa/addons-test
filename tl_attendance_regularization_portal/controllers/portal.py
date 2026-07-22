@@ -56,22 +56,22 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
         return {
             'from_date': {'label': _('Fecha inicio'), 'order': 'from_date desc'},
             'create_date': {'label': _('Más reciente'), 'order': 'create_date desc'},
-            'state': {'label': _('Estado'), 'order': 'state_select'},
+            'state': {'label': _('Estado'), 'order': 'state'},
         }
 
     def _get_regularization_searchbar_groupby(self):
         return {
             'none': {'input': 'none', 'label': _('Ninguno'), 'order': 1},
-            'state': {'input': 'state_select', 'label': _('Estado'), 'order': 2},
+            'state': {'input': 'state', 'label': _('Estado'), 'order': 2},
         }
 
     def _get_regularization_searchbar_filterby(self):
         return {
             'all': {'label': _('Todos'), 'domain': []},
-            'draft': {'label': _('Borrador'), 'domain': [('state_select', '=', 'draft')]},
-            'requested': {'label': _('Solicitado'), 'domain': [('state_select', '=', 'requested')]},
-            'approved': {'label': _('Aprobado'), 'domain': [('state_select', '=', 'approved')]},
-            'rejected': {'label': _('Rechazado'), 'domain': [('state_select', '=', 'reject')]},
+            'draft': {'label': _('Borrador'), 'domain': [('state', '=', 'draft')]},
+            'requested': {'label': _('Solicitado'), 'domain': [('state', '=', 'requested')]},
+            'approved': {'label': _('Aprobado'), 'domain': [('state', '=', 'approved')]},
+            'rejected': {'label': _('Rechazado'), 'domain': [('state', '=', 'reject')]},
         }
 
     def _get_regularization_searchbar_inputs(self):
@@ -135,7 +135,7 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
             offset=pager['offset'],
         )
 
-        groupby_mapping = {'state': 'state_select'}
+        groupby_mapping = {'state': 'state'}
         group_field = groupby_mapping.get(groupby)
         if group_field:
             grouped_records = [
@@ -149,7 +149,7 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
 
         state_labels = dict(
             request.env['attendance.regular'].fields_get(
-                ['state_select'])['state_select']['selection']
+                ['state'])['state']['selection']
         )
 
         values.update({
@@ -195,7 +195,7 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
                     'to_date': to_dt,
                     'reg_reason': reg_reason,
                     'employee_id': employee.id,
-                    'state_select': 'requested',
+                    'state': 'requested',
                 })
             return request.redirect('/my/regularization')
 
@@ -216,7 +216,7 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
             return request.render(
                 'dh_attendance_regularization_portal.portal_regularization_access_denied', {})
 
-        if reg.state_select != 'draft':
+        if reg.state != 'draft':
             return request.redirect('/my/regularization/%d' % reg_id)
 
         if button_save == 'save':
@@ -255,8 +255,8 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
             return request.render(
                 'dh_attendance_regularization_portal.portal_regularization_access_denied', {})
 
-        if reg.state_select == 'draft':
-            reg.action_submit_reg()
+        if reg.state == 'draft':
+            reg.action_submit()
 
         return request.redirect('/my/regularization')
 
@@ -265,7 +265,7 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
         reg = request.env['attendance.regular'].sudo().browse(reg_id)
 
         if reg and reg.employee_id.id == request.env.user.employee_id.id \
-                and reg.state_select == 'draft':
+                and reg.state == 'draft':
             reg.unlink()
 
         return request.redirect('/my/regularization')
@@ -280,7 +280,7 @@ class AttendanceRegularizationPortal(portal.CustomerPortal):
 
         state_labels = dict(
             request.env['attendance.regular'].fields_get(
-                ['state_select'])['state_select']['selection']
+                ['state'])['state']['selection']
         )
 
         values = {
