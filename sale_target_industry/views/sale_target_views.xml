@@ -2,34 +2,6 @@
 <!-- License OPL-1 -->
 <odoo>
 
-    <!-- ================================================================
-         SEARCH VIEW — sale.target
-         ================================================================ -->
-    <record id="view_sale_target_search" model="ir.ui.view">
-        <field name="name">sale.target.search</field>
-        <field name="model">sale.target</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="name"/>
-                <field name="user_id"/>
-                <field name="year"/>
-                <field name="company_id"/>
-
-                <filter string="Draft" name="state_draft" domain="[('state', '=', 'draft')]"/>
-                <filter string="Active" name="state_active" domain="[('state', '=', 'active')]"/>
-                <filter string="Done" name="state_done" domain="[('state', '=', 'done')]"/>
-                <separator/>
-                <filter string="My Plans" name="my_plans" domain="[('user_id', '=', uid)]"/>
-
-                <group expand="0" string="Group By">
-                    <filter string="Responsible" name="groupby_user" domain="[]" context="{'group_by': 'user_id'}"/>
-                    <filter string="Year" name="groupby_year" domain="[]" context="{'group_by': 'year'}"/>
-                    <filter string="Status" name="groupby_state" domain="[]" context="{'group_by': 'state'}"/>
-                    <filter string="Company" name="groupby_company" domain="[]" context="{'group_by': 'company_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
 
     <!-- ================================================================
          LIST VIEW — sale.target
@@ -182,7 +154,6 @@
         <field name="name">Sales Target Plans</field>
         <field name="res_model">sale.target</field>
         <field name="view_mode">list,form</field>
-        <field name="search_view_id" ref="view_sale_target_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Sales Target Plan
