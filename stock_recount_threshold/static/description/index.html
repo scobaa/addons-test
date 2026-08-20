@@ -1,53 +1,129 @@
 <section class="oe_container">
-    <div class="row">
-        <div class="col-12 text-center" style="margin-bottom: 24px;">
-            <h1>Stock Recount Threshold</h1>
-            <h3 style="color:#714bb2;">Recuentos disparados por actividad real, no por calendario</h3>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h4>¿Qué hace?</h4>
-            <p>
-                Define un umbral de cantidad por producto. Cuando un picking,
-                una entrega o un consumo de fabricación deja el stock
-                disponible en ese umbral o por debajo, el módulo genera
-                automáticamente una <strong>solicitud de recuento</strong>
-                con una actividad asignada al responsable que tú elijas.
-            </p>
-        </div>
-        <div class="col-md-6">
-            <h4>¿Por qué usarlo?</h4>
-            <p>
-                Los recuentos cíclicos programados por fecha no siempre
-                coinciden con cuándo el stock realmente se mueve. Este
-                módulo dispara el recuento justo cuando hace falta:
-                después de la actividad real de almacén o fabricación,
-                no en una fecha arbitraria del calendario.
+    <div class="oe_row oe_spaced text-center">
+        <h2 class="oe_slogan" style="color: #875A7B; font-weight: 700; font-size: 32px;">
+            Stock Recount Threshold & Automated Inventory Audits
+        </h2>
+        <h3 class="oe_slogan" style="color: #4A4A4A; font-size: 20px; font-weight: 400;">
+            Prevent stock discrepancies by automatically triggering recount requests when inventory hits custom thresholds
+        </h3>
+        <div class="oe_span12">
+            <p class="oe_mt32 text-center" style="font-size: 16px; line-height: 1.6; color: #555; max-width: 850px; margin: auto;">
+                Discrepancies in warehouse inventory often go unnoticed until standard cycle counts. 
+                <strong>Stock Recount Threshold</strong> allows warehouse managers to configure dynamic recount thresholds directly on products and stock movements, automatically generating dedicated recount tasks before inventory errors impact sales or operations.
             </p>
         </div>
     </div>
+</section>
 
-    <div class="row" style="margin-top: 24px;">
-        <div class="col-12">
-            <h4>Características</h4>
-            <ul>
-                <li>Umbral configurable por producto, con responsable opcional.</li>
-                <li>Detecta tanto salidas de picking/entrega como consumo de
-                    materias primas en órdenes de fabricación.</li>
-                <li>Evita duplicados: no crea una nueva solicitud si ya hay
-                    una pendiente para el mismo producto y ubicación.</li>
-                <li>Actividad de Odoo asignada automáticamente, con acceso
-                    directo al ajuste de inventario desde la propia solicitud.</li>
-                <li>Disponible en español, inglés y francés.</li>
-            </ul>
+<!-- Value Proposition / Key Features -->
+<!-- Value Proposition / Key Features -->
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h3 class="oe_slogan text-center" style="color: #2C3E50; margin-bottom: 40px;">Why Choose This Module?</h3>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white rounded shadow-sm h-100 text-center">
+                    <div style="margin-bottom: 15px;">
+                        <i class="fa fa-bullseye fa-3x" style="color: #875A7B;"></i>
+                    </div>
+                    <h4 style="color: #875A7B; font-weight: 600; font-size: 18px;">Automated Recount Requests</h4>
+                    <p style="color: #666; font-size: 14px; line-height: 1.5;">
+                        Automatically create formal recount requests when stock levels breach configured minimum or variance thresholds.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white rounded shadow-sm h-100 text-center">
+                    <div style="margin-bottom: 15px;">
+                        <i class="fa fa-cubes fa-3x" style="color: #875A7B;"></i>
+                    </div>
+                    <h4 style="color: #875A7B; font-weight: 600; font-size: 18px;">Product-Level Configuration</h4>
+                    <p style="color: #666; font-size: 14px; line-height: 1.5;">
+                        Set custom audit thresholds per product template or category to prioritize high-value or fast-moving items.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white rounded shadow-sm h-100 text-center">
+                    <div style="margin-bottom: 15px;">
+                        <i class="fa fa-truck fa-3x" style="color: #875A7B;"></i>
+                    </div>
+                    <h4 style="color: #875A7B; font-weight: 600; font-size: 18px;">Stock Move Monitoring</h4>
+                    <p style="color: #666; font-size: 14px; line-height: 1.5;">
+                        Seamlessly integrates into stock moves and picking validations to track changes and audit triggers in real time.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
+</section>
 
-    <div class="row" style="margin-top: 24px;">
-        <div class="col-12 text-center">
-            <p><em>Desarrollado por srgcba</em></p>
+<!-- Walkthrough / Screenshots -->
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h3 class="oe_slogan text-center" style="color: #2C3E50;">How It Works</h3>
+        
+        <!-- Step 1 -->
+        <div class="row align-items-center oe_mt32">
+            <div class="col-md-6">
+                <h4 style="font-weight: 600; color: #875A7B;">1. Set Recount Thresholds on Products</h4>
+                <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                    Define the threshold limits directly within the product template inventory view. Specify when the system should flag a product for physical recount.
+                </p>
+            </div>
+            <div class="col-md-6 text-center">
+                <img class="oe_picture oe_screenshot img-fluid shadow-sm rounded border" src="screenshot_product_threshold.png" alt="Product Recount Threshold Configuration">
+            </div>
+        </div>
+
+        <hr class="oe_mt32 oe_mb32" style="border-top: 1px solid #e9ecef;"/>
+
+        <!-- Step 2 -->
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-2">
+                <h4 style="font-weight: 600; color: #875A7B;">2. Automatic Trigger on Stock Operations</h4>
+                <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                    Whenever stock moves or deliveries push inventory beyond the threshold limits, the system immediately registers a recount requirement.
+                </p>
+            </div>
+            <div class="col-md-6 order-md-1 text-center">
+                <img class="oe_picture oe_screenshot img-fluid shadow-sm rounded border" src="screenshot_stock_move.png" alt="Stock Move Threshold Trigger">
+            </div>
+        </div>
+
+        <hr class="oe_mt32 oe_mb32" style="border-top: 1px solid #e9ecef;"/>
+
+        <!-- Step 3 -->
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h4 style="font-weight: 600; color: #875A7B;">3. Manage Recount Requests</h4>
+                <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                    Warehouse teams get a centralized dashboard to track, assign, validate, or reject recount requests, ensuring full stock accuracy.
+                </p>
+            </div>
+            <div class="col-md-6 text-center">
+                <img class="oe_picture oe_screenshot img-fluid shadow-sm rounded border" src="screenshot_recount_requests.png" alt="Recount Requests Dashboard">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Support & Compatibility -->
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <div class="col-md-12 text-center">
+            <h3 class="oe_slogan" style="color: #2C3E50;">Support & Customization</h3>
+            <p style="font-size: 15px; color: #666; max-width: 600px; margin: 10px auto 25px auto;">
+                Have questions or need assistance tailoring this module to your warehouse workflow? Contact our dedicated support team.
+            </p>
+            <div>
+                <span class="badge badge-pill p-2 px-3 mr-2" style="background-color: #875A7B; color: #fff; font-size: 13px;">
+                    Odoo 19.0 Community & Enterprise
+                </span>
+                <span class="badge badge-pill p-2 px-3" style="background-color: #00A09D; color: #fff; font-size: 13px;">
+                    Clean Architecture & Tested
+                </span>
+            </div>
         </div>
     </div>
 </section>
