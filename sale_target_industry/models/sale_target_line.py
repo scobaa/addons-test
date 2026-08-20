@@ -147,8 +147,7 @@ class SaleTargetLine(models.Model):
           - partner_id.industry_id == self.industry_id
           - company_id == self.company_id
 
-        We use a direct ORM read_group for performance instead of
-        iterating individual records.
+        Uses _read_group (Odoo 17+ API) for aggregation performance.
         """
         SaleOrder = self.env['sale.order']
 
@@ -160,27 +159,29 @@ class SaleTargetLine(models.Model):
             month_int = int(line.month)
             year_int = int(line.year)
 
-            # Build domain
+            # Next month boundary (handles December → January crossover)
+            if month_int == 12:
+                next_year, next_month = year_int + 1, 1
+            else:
+                next_year, next_month = year_int, month_int + 1
+
             domain = [
                 ('state', 'in', ['sale', 'done']),
                 ('company_id', '=', line.company_id.id),
                 ('partner_id.industry_id', '=', line.industry_id.id),
-                # Filter by year-month using date_order (Datetime field)
                 ('date_order', '>=', f'{year_int:04d}-{month_int:02d}-01 00:00:00'),
-                ('date_order', '<',
-                 # Next month boundary (handles December → January crossover)
-                 f'{year_int + (1 if month_int == 12 else 0):04d}'
-                 f'-{1 if month_int == 12 else month_int + 1:02d}'
-                 f'-01 00:00:00'),
+                ('date_order', '<', f'{next_year:04d}-{next_month:02d}-01 00:00:00'),
             ]
 
-            # Aggregate without loading full records
-            result = SaleOrder.read_group(
+            # _read_group is the Odoo 17+ replacement for read_group
+            # Returns a list of group dicts; with groupby=[] there is always 1 row.
+            groups = SaleOrder._read_group(
                 domain=domain,
-                fields=['amount_untaxed:sum'],
                 groupby=[],
+                aggregates=['amount_untaxed:sum'],
             )
-            line.achieved_amount = result[0]['amount_untaxed'] if result else 0.0
+            # _read_group returns list of tuples: [(...aggregate_values...)]
+            line.achieved_amount = groups[0][0] if groups else 0.0
 
     # -------------------------------------------------------------------------
     # Compute: achievement_rate & gap_amount
@@ -219,12 +220,12 @@ class SaleTargetLine(models.Model):
                 ))
 
     # -------------------------------------------------------------------------
-    # Display name
+    # Display name  (Odoo 17+: override display_name instead of name_get)
     # -------------------------------------------------------------------------
-    def name_get(self):
-        result = []
+    def _compute_display_name(self):
+        """Custom display name: 'Industry — Month Year'."""
         for line in self:
             month_label = dict(self._fields['month'].selection).get(line.month, '')
-            name = f'{line.industry_id.name or "?"} — {month_label} {line.year}'
-            result.append((line.id, name))
-        return result
+            line.display_name = (
+                f'{line.industry_id.name or "?"} — {month_label} {line.year}'
+            )
