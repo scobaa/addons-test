@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Stock Recount Threshold',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Inventory/Inventory',
     'summary': 'Dispara automáticamente una solicitud de recuento cuando el '
                 'stock de un producto cruza un umbral configurable tras un '
@@ -22,7 +22,7 @@ Pensado para flujos donde se trabaja con la app de Códigos de Barras y no
 se quiere confiar en recuentos cíclicos programados por fecha, sino en
 recuentos disparados por actividad real de picking/consumo.
     """,
-    'author': 'Tu nombre / Tu consultora',
+    'author': 'srgcba',
     'website': '',
     'license': 'LGPL-3',
     'depends': ['stock', 'mrp', 'mail'],
@@ -33,4 +33,5 @@ recuentos disparados por actividad real de picking/consumo.
     'installable': True,
     'application': False,
     'auto_install': False,
+    'images': ['static/description/icon.png'],
 }

@@ -1,0 +1,158 @@
+# Translation Template for Stock Recount Threshold
+# Copyright (C) srgcba
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: \n"
+
+#. module: stock_recount_threshold
+#: model:ir.model,name:stock_recount_threshold.model_stock_recount_request
+msgid "Solicitud de recuento por umbral"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.actions.act_window,name:stock_recount_threshold.stock_recount_request_action
+#: model:ir.ui.menu,name:stock_recount_threshold.menu_stock_recount_request
+msgid "Solicitudes de recuento"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model_terms:ir.ui.view,arch_db:stock_recount_threshold.stock_recount_request_form_view
+msgid "Solicitud de recuento"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_product_template__recount_enabled
+msgid "Recuento automático activo"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,help:stock_recount_threshold.field_product_template__recount_enabled
+msgid "Si está activo, cuando la cantidad disponible de este producto cruce el umbral definido abajo tras un picking o consumo, se generará automáticamente una solicitud de recuento."
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_product_template__recount_threshold_qty
+msgid "Umbral de recuento"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,help:stock_recount_threshold.field_product_template__recount_threshold_qty
+msgid "Cuando la cantidad disponible (on hand) de este producto, en una ubicación dada, cae a este valor o por debajo tras un movimiento de stock, se generará una solicitud de recuento automáticamente."
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_product_template__recount_responsible_id
+msgid "Responsable del recuento"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,help:stock_recount_threshold.field_product_template__recount_responsible_id
+msgid "Usuario al que se le asignará la actividad de recuento. Si se deja vacío, se usará el responsable de la operación de stock que disparó el umbral."
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model_terms:ir.ui.view,arch_db:stock_recount_threshold.product_template_form_view_recount
+msgid "Recuento automático"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__product_id
+msgid "Producto"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__location_id
+msgid "Ubicación"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__triggering_move_id
+msgid "Movimiento que lo disparó"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__quantity_at_trigger
+msgid "Cantidad disponible al disparar"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,help:stock_recount_threshold.field_stock_recount_request__quantity_at_trigger
+msgid "Cantidad on-hand justo después del movimiento que cruzó el umbral."
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__threshold_qty
+msgid "Umbral configurado"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__responsible_id
+msgid "Responsable"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__state
+msgid "Estado"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: selection:stock.recount.request,state:0
+msgid "Pendiente"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: selection:stock.recount.request,state:0
+msgid "Recontado"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: selection:stock.recount.request,state:0
+msgid "Cancelado"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__activity_id
+msgid "Actividad relacionada"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model:ir.model.fields,field_description:stock_recount_threshold.field_stock_recount_request__company_id
+msgid "Compañía"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model_terms:ir.ui.view,arch_db:stock_recount_threshold.stock_recount_request_form_view
+msgid "Abrir ajuste de inventario"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model_terms:ir.ui.view,arch_db:stock_recount_threshold.stock_recount_request_form_view
+msgid "Marcar como recontado"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: model_terms:ir.ui.view,arch_db:stock_recount_threshold.stock_recount_request_form_view
+msgid "Cancelar"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: code:addons/stock_recount_threshold/models/stock_recount_request.py:0
+#, python-format
+msgid "Ajuste de inventario"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: code:addons/stock_recount_threshold/models/stock_recount_request.py:0
+#, python-format
+msgid "Recuento requerido: %s"
+msgstr ""
+
+#. module: stock_recount_threshold
+#: code:addons/stock_recount_threshold/models/stock_recount_request.py:0
+#, python-format
+msgid "La cantidad disponible de %(product)s en %(location)s bajó a %(qty).2f, igual o por debajo del umbral configurado (%(threshold).2f). Por favor, realiza un recuento físico."
+msgstr ""

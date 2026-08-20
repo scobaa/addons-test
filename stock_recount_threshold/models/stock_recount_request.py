@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
+from odoo.tools.translate import _
 
 
 class StockRecountRequest(models.Model):
@@ -57,7 +58,7 @@ class StockRecountRequest(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Ajuste de inventario',
+            'name': _('Ajuste de inventario'),
             'res_model': 'stock.quant',
             'view_mode': 'list,form',
             'domain': [
@@ -93,14 +94,18 @@ class StockRecountRequest(models.Model):
         })
         activity = request.activity_schedule(
             'mail.mail_activity_data_todo',
-            summary='Recuento requerido: %s' % product.display_name,
-            note=(
-                'La cantidad disponible de %s en %s bajó a %.2f, '
-                'igual o por debajo del umbral configurado (%.2f). '
-                'Por favor, realiza un recuento físico.'
-                % (product.display_name, location.display_name,
-                   quantity_at_trigger, threshold_qty)
-            ),
+            summary=_('Recuento requerido: %s') % product.display_name,
+            note=_(
+                'La cantidad disponible de %(product)s en %(location)s '
+                'bajó a %(qty).2f, igual o por debajo del umbral '
+                'configurado (%(threshold).2f). Por favor, realiza un '
+                'recuento físico.'
+            ) % {
+                'product': product.display_name,
+                'location': location.display_name,
+                'qty': quantity_at_trigger,
+                'threshold': threshold_qty,
+            },
             user_id=responsible.id,
         )
         request.activity_id = activity.id

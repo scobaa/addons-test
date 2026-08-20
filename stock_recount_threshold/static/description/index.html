@@ -1,0 +1,53 @@
+<section class="oe_container">
+    <div class="row">
+        <div class="col-12 text-center" style="margin-bottom: 24px;">
+            <h1>Stock Recount Threshold</h1>
+            <h3 style="color:#714bb2;">Recuentos disparados por actividad real, no por calendario</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>¿Qué hace?</h4>
+            <p>
+                Define un umbral de cantidad por producto. Cuando un picking,
+                una entrega o un consumo de fabricación deja el stock
+                disponible en ese umbral o por debajo, el módulo genera
+                automáticamente una <strong>solicitud de recuento</strong>
+                con una actividad asignada al responsable que tú elijas.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h4>¿Por qué usarlo?</h4>
+            <p>
+                Los recuentos cíclicos programados por fecha no siempre
+                coinciden con cuándo el stock realmente se mueve. Este
+                módulo dispara el recuento justo cuando hace falta:
+                después de la actividad real de almacén o fabricación,
+                no en una fecha arbitraria del calendario.
+            </p>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 24px;">
+        <div class="col-12">
+            <h4>Características</h4>
+            <ul>
+                <li>Umbral configurable por producto, con responsable opcional.</li>
+                <li>Detecta tanto salidas de picking/entrega como consumo de
+                    materias primas en órdenes de fabricación.</li>
+                <li>Evita duplicados: no crea una nueva solicitud si ya hay
+                    una pendiente para el mismo producto y ubicación.</li>
+                <li>Actividad de Odoo asignada automáticamente, con acceso
+                    directo al ajuste de inventario desde la propia solicitud.</li>
+                <li>Disponible en español, inglés y francés.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 24px;">
+        <div class="col-12 text-center">
+            <p><em>Desarrollado por srgcba</em></p>
+        </div>
+    </div>
+</section>
