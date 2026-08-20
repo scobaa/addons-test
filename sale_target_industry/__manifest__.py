@@ -4,26 +4,30 @@
 {
     'name': 'Sales Targets by Industry & Period',
     'version': '19.0.1.0.0',
-    'summary': 'Define and track sales targets broken down by customer industry, year and month.',
+    'category': 'Sales/Sales',
+    'summary': 'Define and track billing revenue targets by customer sector (industry), year and month with automatic computation from sales orders.',
     'description': """
 Sales Targets by Industry & Period
 ====================================
-Allows sales managers to define billing targets broken down by:
-- Customer Sector / Industry (res.partner.industry)
-- Year and Month
+Empower your sales leadership with automated, data-driven revenue targets
+segmented by Customer Sector / Industry (`res.partner.industry`), Year, and Month.
 
-Automatically calculates the achieved amount from confirmed sales orders
-and computes the achievement rate percentage.
-
-Features:
-- Target Plan (header) with editable target lines (table view)
-- Pivot and Graph views for comparing target vs achieved by industry and month
-- Manual recalculation button on the target plan header
-- Accessible from Sales > Reporting > Targets by Industry
+Key Features:
+-------------
+* **Target Planning:** Create structured sales campaigns with target lines per industry and month.
+* **100% Automated Calculation:** Computes actual achieved amount from confirmed sales orders in real-time.
+* **Performance Metrics:** Automatic computation of Achievement Rate (%) and Gap amount with visual indicators.
+* **Interactive Reporting:** Dedicated Pivot (matrix) and Graph (bar chart) views comparing Target vs. Achieved.
+* **Manual Recalculation:** One-click header button to instantly refresh metrics.
+* **Multi-Company & Multi-Currency:** Native support for multi-company isolation and company currencies.
+* **Security Permissions:** Pre-configured access rights for Sales Representatives and Sales Managers.
+* **Chatter Integration:** Full activity tracking and messaging.
     """,
     'author': 'Tealcloud',
-    'category': 'Sales/Sales',
+    'website': 'https://tealcloud.es',
     'license': 'OPL-1',
+    'price': 49.00,
+    'currency': 'EUR',
     'depends': [
         'sale_management',
         'mail',
@@ -34,6 +38,9 @@ Features:
         'views/sale_target_views.xml',
         'views/sale_target_line_views.xml',
         'views/menu_views.xml',
+    ],
+    'images': [
+        'static/description/icon.png',
     ],
     'installable': True,
     'application': False,
