@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Añadir campos de umbral en la ficha de producto, pestaña Inventario.
+
+        NOTA IMPORTANTE: se hereda de 'product.product_template_form_view',
+        la vista base del módulo 'product' (no la de 'stock'), porque es
+        mucho más estable entre versiones. Los ids de vistas añadidas por
+        'stock' han cambiado varias veces entre versiones, y en 19.x hubo
+        una reestructuración notable de las vistas de producto (ver
+        cambios sobre gestión de variantes en 19.4). Aun así, ANTES de
+        instalar en tu entorno real, confirma con el modo desarrollador
+        (Configuración > Técnico > Vistas) que existe una page con
+        name="inventory" en la vista de formulario de producto que estés
+        usando. Si no la encuentras, busca ahí mismo el nombre exacto de
+        la pestaña de Inventario en tu versión y ajusta el xpath.
+    -->
+    <record id="product_template_form_view_recount" model="ir.ui.view">
+        <field name="name">product.template.form.recount.threshold</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='inventory']" position="inside">
+                <group string="Recuento automático">
+                    <field name="recount_enabled"/>
+                    <field name="recount_threshold_qty"
+                           invisible="not recount_enabled"/>
+                    <field name="recount_responsible_id"
+                           invisible="not recount_enabled"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista lista de solicitudes de recuento -->
+    <record id="stock_recount_request_list_view" model="ir.ui.view">
+        <field name="name">stock.recount.request.list</field>
+        <field name="model">stock.recount.request</field>
+        <field name="arch" type="xml">
+            <list string="Solicitudes de recuento" decoration-muted="state != 'pending'">
+                <field name="product_id"/>
+                <field name="location_id"/>
+                <field name="quantity_at_trigger"/>
+                <field name="threshold_qty"/>
+                <field name="responsible_id"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'pending'"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'cancel'"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista formulario de solicitudes de recuento -->
+    <record id="stock_recount_request_form_view" model="ir.ui.view">
+        <field name="name">stock.recount.request.form</field>
+        <field name="model">stock.recount.request</field>
+        <field name="arch" type="xml">
+            <form string="Solicitud de recuento">
+                <header>
+                    <button name="action_open_inventory_adjustment" type="object"
+                            string="Abrir ajuste de inventario" class="oe_highlight"
+                            invisible="state != 'pending'"/>
+                    <button name="action_mark_done" type="object"
+                            string="Marcar como recontado"
+                            invisible="state != 'pending'"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancelar"
+                            invisible="state != 'pending'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="location_id"/>
+                            <field name="responsible_id"/>
+                        </group>
+                        <group>
+                            <field name="quantity_at_trigger"/>
+                            <field name="threshold_qty"/>
+                            <field name="triggering_move_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción y menú -->
+    <record id="stock_recount_request_action" model="ir.actions.act_window">
+        <field name="name">Solicitudes de recuento</field>
+        <field name="res_model">stock.recount.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <menuitem id="menu_stock_recount_request"
+              name="Solicitudes de recuento"
+              parent="stock.menu_stock_warehouse_mgmt"
+              action="stock_recount_request_action"
+              sequence="100"/>
+
+</odoo>
