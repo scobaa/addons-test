@@ -4,56 +4,31 @@
 
     <!-- ================================================================
          SEARCH VIEW — sale.target.line
-         Used by the standalone list, pivot and graph views.
          ================================================================ -->
-    <record id="sale_target_line_search_view" model="ir.ui.view">
+    <record id="view_sale_target_line_search" model="ir.ui.view">
         <field name="name">sale.target.line.search</field>
         <field name="model">sale.target.line</field>
         <field name="arch" type="xml">
-            <search string="Search Target Lines">
-                <field name="industry_id" string="Industry"/>
-                <field name="target_id" string="Plan"/>
-                <field name="year" string="Year"/>
+            <search>
+                <field name="industry_id"/>
+                <field name="target_id"/>
+                <field name="year"/>
 
-                <!-- Quick filters -->
-                <!-- NOTE: 'year' is an Integer field related to the plan year.
-                     We avoid context_today().year in static domains for safety;
-                     the user can type the year in the search bar instead. -->
-                <filter name="filter_below_target"
-                        string="Below Target"
-                        domain="[('achievement_rate', '&lt;', 100)]"/>
-                <filter name="filter_on_target"
-                        string="On or Above Target"
-                        domain="[('achievement_rate', '&gt;=', 100)]"/>
+                <filter string="Below Target" name="filter_below_target" domain="[('achievement_rate', '&lt;', 100)]"/>
+                <filter string="On or Above Target" name="filter_on_target" domain="[('achievement_rate', '&gt;=', 100)]"/>
 
                 <separator/>
-                <!-- Month / Quarter filters -->
-                <filter name="filter_q1" string="Q1"
-                        domain="[('month', 'in', ['1', '2', '3'])]"/>
-                <filter name="filter_q2" string="Q2"
-                        domain="[('month', 'in', ['4', '5', '6'])]"/>
-                <filter name="filter_q3" string="Q3"
-                        domain="[('month', 'in', ['7', '8', '9'])]"/>
-                <filter name="filter_q4" string="Q4"
-                        domain="[('month', 'in', ['10', '11', '12'])]"/>
+                <filter string="Q1" name="filter_q1" domain="[('month', 'in', ['1', '2', '3'])]"/>
+                <filter string="Q2" name="filter_q2" domain="[('month', 'in', ['4', '5', '6'])]"/>
+                <filter string="Q3" name="filter_q3" domain="[('month', 'in', ['7', '8', '9'])]"/>
+                <filter string="Q4" name="filter_q4" domain="[('month', 'in', ['10', '11', '12'])]"/>
 
-                <!-- Group by options -->
                 <group expand="1" string="Group By">
-                    <filter name="group_by_industry"
-                            string="Industry"
-                            context="{'group_by': 'industry_id'}"/>
-                    <filter name="group_by_month"
-                            string="Month"
-                            context="{'group_by': 'month'}"/>
-                    <filter name="group_by_year"
-                            string="Year"
-                            context="{'group_by': 'year'}"/>
-                    <filter name="group_by_plan"
-                            string="Plan"
-                            context="{'group_by': 'target_id'}"/>
-                    <filter name="group_by_company"
-                            string="Company"
-                            context="{'group_by': 'company_id'}"/>
+                    <filter string="Industry" name="groupby_industry" domain="[]" context="{'group_by': 'industry_id'}"/>
+                    <filter string="Month" name="groupby_month" domain="[]" context="{'group_by': 'month'}"/>
+                    <filter string="Year" name="groupby_year" domain="[]" context="{'group_by': 'year'}"/>
+                    <filter string="Plan" name="groupby_plan" domain="[]" context="{'group_by': 'target_id'}"/>
+                    <filter string="Company" name="groupby_company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
                 </group>
             </search>
         </field>
@@ -62,7 +37,7 @@
     <!-- ================================================================
          LIST VIEW — sale.target.line (standalone / reporting)
          ================================================================ -->
-    <record id="sale_target_line_list_view" model="ir.ui.view">
+    <record id="view_sale_target_line_tree" model="ir.ui.view">
         <field name="name">sale.target.line.list</field>
         <field name="model">sale.target.line</field>
         <field name="arch" type="xml">
@@ -86,70 +61,47 @@
 
     <!-- ================================================================
          PIVOT VIEW — sale.target.line
-         Rows:    Industry
-         Columns: Month
-         Measures: target_amount, achieved_amount, achievement_rate
          ================================================================ -->
-    <record id="sale_target_line_pivot_view" model="ir.ui.view">
+    <record id="view_sale_target_line_pivot" model="ir.ui.view">
         <field name="name">sale.target.line.pivot</field>
         <field name="model">sale.target.line</field>
         <field name="arch" type="xml">
             <pivot string="Targets by Industry &amp; Month">
-                <!-- Default row grouping: Industry -->
                 <field name="industry_id" type="row"/>
-                <!-- Default column grouping: Month -->
                 <field name="month" type="col"/>
-                <!-- Measures -->
-                <field name="target_amount"
-                       type="measure"
-                       string="Target Amount"/>
-                <field name="achieved_amount"
-                       type="measure"
-                       string="Achieved Amount"/>
-                <field name="achievement_rate"
-                       type="measure"
-                       string="Achievement (%)"/>
+                <field name="target_amount" type="measure" string="Target Amount"/>
+                <field name="achieved_amount" type="measure" string="Achieved Amount"/>
+                <field name="achievement_rate" type="measure" string="Achievement (%)"/>
             </pivot>
         </field>
     </record>
 
     <!-- ================================================================
          GRAPH VIEW — sale.target.line
-         Bar chart comparing Target vs Achieved grouped by Industry.
          ================================================================ -->
-    <record id="sale_target_line_graph_view" model="ir.ui.view">
+    <record id="view_sale_target_line_graph" model="ir.ui.view">
         <field name="name">sale.target.line.graph</field>
         <field name="model">sale.target.line</field>
         <field name="arch" type="xml">
-            <graph string="Target vs Achieved by Industry"
-                   type="bar"
-                   stacked="false">
-                <!-- X-axis: Industry -->
+            <graph string="Target vs Achieved by Industry" type="bar" stacked="false">
                 <field name="industry_id" type="row"/>
-                <!-- Measures -->
-                <field name="target_amount"
-                       type="measure"
-                       string="Target"/>
-                <field name="achieved_amount"
-                       type="measure"
-                       string="Achieved"/>
+                <field name="target_amount" type="measure" string="Target"/>
+                <field name="achieved_amount" type="measure" string="Achieved"/>
             </graph>
         </field>
     </record>
 
     <!-- ================================================================
          WINDOW ACTION — sale.target.line (Reporting)
-         Opens with pivot as the default view, followed by graph and list.
          ================================================================ -->
     <record id="sale_target_line_action" model="ir.actions.act_window">
         <field name="name">Targets by Industry</field>
         <field name="res_model">sale.target.line</field>
         <field name="view_mode">pivot,graph,list</field>
-        <field name="search_view_id" ref="sale_target_line_search_view"/>
-        <!-- Default context: group by industry + month -->
+        <field name="search_view_id" ref="view_sale_target_line_search"/>
         <field name="context">{
-            'search_default_group_by_industry': 1,
-            'search_default_group_by_month': 1
+            'search_default_groupby_industry': 1,
+            'search_default_groupby_month': 1
         }</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
