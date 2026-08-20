@@ -6,7 +6,7 @@
          SEARCH VIEW — sale.target
          ================================================================ -->
     <record id="sale_target_search_view" model="ir.ui.view">
-        <field name="name">sale.target.search</field>
+        <field name="name">sale.target.search.v2</field>
         <field name="model">sale.target</field>
         <field name="priority">16</field>
         <field name="arch" type="xml">
