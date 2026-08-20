@@ -16,7 +16,7 @@
                   decoration-muted="state == 'cancelled'">
 
                 <field name="name"/>
-                <field name="year"/>
+                <field name="year" options="{'format': 0}"/>
                 <field name="user_id" widget="many2one_avatar_user"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="total_target_amount" sum="Total Target"/>
@@ -94,7 +94,7 @@
 
                     <group>
                         <group string="Plan Details">
-                            <field name="year"/>
+                            <field name="year" options="{'format': 0}"/>
                             <field name="user_id" widget="many2one_avatar_user"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="currency_id" readonly="1"/>

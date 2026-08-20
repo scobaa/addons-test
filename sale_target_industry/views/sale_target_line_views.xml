@@ -17,7 +17,7 @@
 
                 <field name="target_id"/>
                 <field name="industry_id"/>
-                <field name="year"/>
+                <field name="year" options="{'format': 0}"/>
                 <field name="month"/>
                 <field name="target_amount" sum="Total Target"/>
                 <field name="achieved_amount" sum="Total Achieved"/>
