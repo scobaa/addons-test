@@ -68,17 +68,14 @@
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="total_target_amount" sum="Total Target"/>
                 <field name="total_achieved_amount" sum="Total Achieved"/>
-                <field name="total_achievement_rate"
-                       string="Achievement (%)"
-                       widget="progressbar"
-                       options="{'max_value': 100, 'editable': false}"/>
+                <field name="total_achievement_rate" string="Achievement (%)" sum="Avg Rate"/>
                 <field name="state"
                        widget="badge"
                        decoration-success="state == 'done'"
                        decoration-info="state == 'active'"
                        decoration-warning="state == 'draft'"
                        decoration-danger="state == 'cancelled'"/>
-                <field name="currency_id" invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
             </list>
         </field>
     </record>
@@ -114,9 +111,9 @@
                             type="object"
                             invisible="state in ['done', 'cancelled']"/>
 
-                    <!-- Manual recalculation button — always visible (except cancelled) -->
+                    <!-- Manual recalculation button -->
                     <button name="action_recalculate"
-                            string="🔄 Recalculate"
+                            string="Recalculate"
                             type="object"
                             class="btn-secondary"
                             confirm="This will refresh all achieved amounts from current sales orders. Continue?"
@@ -128,7 +125,6 @@
                 </header>
 
                 <sheet>
-                    <!-- KPI summary boxes -->
                     <div class="oe_button_box" name="button_box"/>
 
                     <widget name="web_ribbon"
@@ -138,7 +134,7 @@
 
                     <!-- Title block -->
                     <div class="oe_title">
-                        <label for="name" class="oe_edit_only"/>
+                        <label for="name"/>
                         <h1>
                             <field name="name"
                                    placeholder="e.g. Annual 2025 — Industrial Sector"
@@ -157,16 +153,15 @@
                             <field name="total_target_amount" readonly="1"/>
                             <field name="total_achieved_amount" readonly="1"/>
                             <field name="total_achievement_rate"
-                                   readonly="1"
-                                   widget="progressbar"
-                                   options="{'max_value': 100, 'editable': false}"/>
+                                   string="Achievement (%)"
+                                   readonly="1"/>
                         </group>
                     </group>
 
                     <!-- Target Lines (editable table) -->
                     <notebook>
                         <page string="Target Lines" name="target_lines">
-                            <field name="line_ids" widget="one2many">
+                            <field name="line_ids">
                                 <list string="Target Lines"
                                       editable="bottom"
                                       decoration-danger="achievement_rate &lt; 50"
@@ -175,7 +170,7 @@
 
                                     <field name="industry_id" required="1"/>
                                     <field name="month" required="1"/>
-                                    <field name="year" readonly="1"/>
+                                    <field name="year" readonly="1" column_invisible="1"/>
                                     <field name="target_amount" sum="Total Target"/>
                                     <field name="achieved_amount"
                                            readonly="1"
@@ -184,10 +179,9 @@
                                            readonly="1"
                                            sum="Total Gap"/>
                                     <field name="achievement_rate"
-                                           readonly="1"
-                                           widget="progressbar"
-                                           options="{'max_value': 100, 'editable': false}"/>
-                                    <field name="currency_id" invisible="1"/>
+                                           string="Achievement (%)"
+                                           readonly="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
                                 </list>
                             </field>
                         </page>
