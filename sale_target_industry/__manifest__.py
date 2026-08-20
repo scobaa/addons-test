@@ -23,8 +23,7 @@ Key Features:
 * **Security Permissions:** Pre-configured access rights for Sales Representatives and Sales Managers.
 * **Chatter Integration:** Full activity tracking and messaging.
     """,
-    'author': 'Tealcloud',
-    'website': 'https://tealcloud.es',
+    'author': 'srgcba',
     'license': 'OPL-1',
     'price': 49.00,
     'currency': 'EUR',
