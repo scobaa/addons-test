@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License OPL-1 -->
+<odoo>
+
+    <!-- ================================================================
+         SEARCH VIEW — sale.target.line
+         Used by the standalone list, pivot and graph views.
+         ================================================================ -->
+    <record id="sale_target_line_search_view" model="ir.ui.view">
+        <field name="name">sale.target.line.search</field>
+        <field name="model">sale.target.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Target Lines">
+                <field name="industry_id" string="Industry"/>
+                <field name="target_id" string="Plan"/>
+                <field name="year" string="Year"/>
+
+                <!-- Quick filters -->
+                <filter name="filter_current_year"
+                        string="Current Year"
+                        domain="[('year', '=', context_today().year)]"/>
+
+                <separator/>
+                <!-- Month filters -->
+                <filter name="filter_q1" string="Q1"
+                        domain="[('month', 'in', ['1', '2', '3'])]"/>
+                <filter name="filter_q2" string="Q2"
+                        domain="[('month', 'in', ['4', '5', '6'])]"/>
+                <filter name="filter_q3" string="Q3"
+                        domain="[('month', 'in', ['7', '8', '9'])]"/>
+                <filter name="filter_q4" string="Q4"
+                        domain="[('month', 'in', ['10', '11', '12'])]"/>
+
+                <separator/>
+                <filter name="filter_below_target"
+                        string="Below Target"
+                        domain="[('achievement_rate', '&lt;', 100)]"/>
+                <filter name="filter_on_target"
+                        string="On or Above Target"
+                        domain="[('achievement_rate', '&gt;=', 100)]"/>
+
+                <!-- Group by options -->
+                <group expand="1" string="Group By">
+                    <filter name="group_by_industry"
+                            string="Industry"
+                            context="{'group_by': 'industry_id'}"/>
+                    <filter name="group_by_month"
+                            string="Month"
+                            context="{'group_by': 'month'}"/>
+                    <filter name="group_by_year"
+                            string="Year"
+                            context="{'group_by': 'year'}"/>
+                    <filter name="group_by_plan"
+                            string="Plan"
+                            context="{'group_by': 'target_id'}"/>
+                    <filter name="group_by_company"
+                            string="Company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         LIST VIEW — sale.target.line (standalone / reporting)
+         ================================================================ -->
+    <record id="sale_target_line_list_view" model="ir.ui.view">
+        <field name="name">sale.target.line.list</field>
+        <field name="model">sale.target.line</field>
+        <field name="arch" type="xml">
+            <list string="Target Lines"
+                  create="false"
+                  edit="false"
+                  decoration-danger="achievement_rate &lt; 50"
+                  decoration-warning="achievement_rate &gt;= 50 and achievement_rate &lt; 80"
+                  decoration-success="achievement_rate &gt;= 100">
+
+                <field name="target_id"/>
+                <field name="industry_id"/>
+                <field name="year"/>
+                <field name="month"/>
+                <field name="target_amount" sum="Total Target"/>
+                <field name="achieved_amount" sum="Total Achieved"/>
+                <field name="gap_amount" sum="Total Gap"/>
+                <field name="achievement_rate"
+                       widget="progressbar"
+                       options="{'max_value': 100, 'editable': false}"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         PIVOT VIEW — sale.target.line
+         Rows:    Industry
+         Columns: Month
+         Measures: target_amount, achieved_amount, achievement_rate
+         ================================================================ -->
+    <record id="sale_target_line_pivot_view" model="ir.ui.view">
+        <field name="name">sale.target.line.pivot</field>
+        <field name="model">sale.target.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Targets by Industry &amp; Month"
+                   disable_linking="false">
+                <!-- Default row grouping: Industry -->
+                <field name="industry_id" type="row"/>
+                <!-- Default column grouping: Month -->
+                <field name="month" type="col"/>
+                <!-- Measures -->
+                <field name="target_amount"
+                       type="measure"
+                       string="Target Amount"/>
+                <field name="achieved_amount"
+                       type="measure"
+                       string="Achieved Amount"/>
+                <field name="achievement_rate"
+                       type="measure"
+                       string="Achievement (%)"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         GRAPH VIEW — sale.target.line
+         Bar chart comparing Target vs Achieved grouped by Industry.
+         ================================================================ -->
+    <record id="sale_target_line_graph_view" model="ir.ui.view">
+        <field name="name">sale.target.line.graph</field>
+        <field name="model">sale.target.line</field>
+        <field name="arch" type="xml">
+            <graph string="Target vs Achieved by Industry"
+                   type="bar"
+                   stacked="false">
+                <!-- X-axis: Industry -->
+                <field name="industry_id" type="row"/>
+                <!-- Measures -->
+                <field name="target_amount"
+                       type="measure"
+                       string="Target"/>
+                <field name="achieved_amount"
+                       type="measure"
+                       string="Achieved"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         WINDOW ACTION — sale.target.line (Reporting)
+         Opens with pivot as the default view, followed by graph and list.
+         ================================================================ -->
+    <record id="sale_target_line_action" model="ir.actions.act_window">
+        <field name="name">Targets by Industry</field>
+        <field name="res_model">sale.target.line</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="sale_target_line_search_view"/>
+        <!-- Default context: group by industry + month, current year -->
+        <field name="context">{
+            'search_default_group_by_industry': 1,
+            'search_default_group_by_month': 1,
+            'search_default_filter_current_year': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No target lines found.
+            </p>
+            <p>
+                Create a Sales Target Plan first and add lines
+                to start tracking your industry targets.
+            </p>
+        </field>
+    </record>
+
+</odoo>

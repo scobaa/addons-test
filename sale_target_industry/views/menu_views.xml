@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License OPL-1 -->
+<odoo>
+
+    <!--
+        Menu Structure
+        ==============
+        Sales (existing app)
+          └── Reporting (existing)
+                └── Targets by Industry         ← NEW root entry
+                      ├── Target Plans           ← sale.target list/form
+                      └── By Industry (Report)   ← sale.target.line pivot/graph
+
+        NOTE on parent IDs:
+          - sale.next_id corresponds to the "Reporting" submenu inside the
+            Sales app as defined in sale_management.
+            If this ID does not exist in your Odoo 19 build, replace it with
+            the correct external ID (e.g. sale.menu_sale_report).
+    -->
+
+    <!-- ================================================================
+         ROOT MENU ITEM
+         Attached under Sales > Reporting (sale.next_id)
+         ================================================================ -->
+    <menuitem
+        id="menu_sale_target_root"
+        name="Targets by Industry"
+        parent="sale.next_id"
+        sequence="50"
+        groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
+    />
+
+    <!-- ================================================================
+         TARGET PLANS — manage plans (list + form)
+         ================================================================ -->
+    <menuitem
+        id="menu_sale_target_plans"
+        name="Target Plans"
+        parent="menu_sale_target_root"
+        action="sale_target_action"
+        sequence="10"
+        groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
+    />
+
+    <!-- ================================================================
+         INDUSTRY REPORT — pivot + graph reporting view
+         ================================================================ -->
+    <menuitem
+        id="menu_sale_target_line_report"
+        name="By Industry (Report)"
+        parent="menu_sale_target_root"
+        action="sale_target_line_action"
+        sequence="20"
+        groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
+    />
+
+</odoo>
+

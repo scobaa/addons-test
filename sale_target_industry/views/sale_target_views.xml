@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License OPL-1 -->
+<odoo>
+
+    <!-- ================================================================
+         SEARCH VIEW — sale.target
+         ================================================================ -->
+    <record id="sale_target_search_view" model="ir.ui.view">
+        <field name="name">sale.target.search</field>
+        <field name="model">sale.target</field>
+        <field name="arch" type="xml">
+            <search string="Search Target Plans">
+                <field name="name" string="Plan Name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="user_id" string="Responsible"/>
+                <field name="year" string="Year"/>
+                <field name="company_id" string="Company"/>
+
+                <!-- Quick filters -->
+                <filter name="filter_draft"
+                        string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_active"
+                        string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="filter_done"
+                        string="Done"
+                        domain="[('state', '=', 'done')]"/>
+
+                <separator/>
+                <filter name="filter_my_plans"
+                        string="My Plans"
+                        domain="[('user_id', '=', uid)]"/>
+
+                <!-- Group by -->
+                <group expand="0" string="Group By">
+                    <filter name="group_by_year"
+                            string="Year"
+                            context="{'group_by': 'year'}"/>
+                    <filter name="group_by_user"
+                            string="Responsible"
+                            context="{'group_by': 'user_id'}"/>
+                    <filter name="group_by_state"
+                            string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_by_company"
+                            string="Company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         LIST VIEW — sale.target
+         ================================================================ -->
+    <record id="sale_target_list_view" model="ir.ui.view">
+        <field name="name">sale.target.list</field>
+        <field name="model">sale.target</field>
+        <field name="arch" type="xml">
+            <list string="Sales Target Plans"
+                  decoration-success="state == 'done'"
+                  decoration-info="state == 'active'"
+                  decoration-muted="state == 'cancelled'">
+
+                <field name="name"/>
+                <field name="year"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="total_target_amount" sum="Total Target"/>
+                <field name="total_achieved_amount" sum="Total Achieved"/>
+                <field name="total_achievement_rate"
+                       string="Achievement (%)"
+                       widget="progressbar"
+                       options="{'max_value': 100, 'editable': false}"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'active'"
+                       decoration-warning="state == 'draft'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         FORM VIEW — sale.target
+         ================================================================ -->
+    <record id="sale_target_form_view" model="ir.ui.view">
+        <field name="name">sale.target.form</field>
+        <field name="model">sale.target</field>
+        <field name="arch" type="xml">
+            <form string="Sales Target Plan">
+
+                <!-- Status bar -->
+                <header>
+                    <!-- State buttons -->
+                    <button name="action_set_active"
+                            string="Set Active"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_set_done"
+                            string="Mark as Done"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'active'"/>
+                    <button name="action_set_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state not in ['done', 'cancelled']"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="state in ['done', 'cancelled']"/>
+
+                    <!-- Manual recalculation button — always visible (except cancelled) -->
+                    <button name="action_recalculate"
+                            string="🔄 Recalculate"
+                            type="object"
+                            class="btn-secondary"
+                            confirm="This will refresh all achieved amounts from current sales orders. Continue?"
+                            invisible="state == 'cancelled'"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,active,done"/>
+                </header>
+
+                <sheet>
+                    <!-- KPI summary boxes -->
+                    <div class="oe_button_box" name="button_box"/>
+
+                    <widget name="web_ribbon"
+                            title="Cancelled"
+                            bg_color="text-bg-danger"
+                            invisible="state != 'cancelled'"/>
+
+                    <!-- Title block -->
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"
+                                   placeholder="e.g. Annual 2025 — Industrial Sector"
+                                   required="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Plan Details">
+                            <field name="year"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" readonly="1"/>
+                        </group>
+                        <group string="Summary">
+                            <field name="total_target_amount" readonly="1"/>
+                            <field name="total_achieved_amount" readonly="1"/>
+                            <field name="total_achievement_rate"
+                                   readonly="1"
+                                   widget="progressbar"
+                                   options="{'max_value': 100, 'editable': false}"/>
+                        </group>
+                    </group>
+
+                    <!-- Target Lines (editable table) -->
+                    <notebook>
+                        <page string="Target Lines" name="target_lines">
+                            <field name="line_ids" widget="one2many">
+                                <list string="Target Lines"
+                                      editable="bottom"
+                                      decoration-danger="achievement_rate &lt; 50"
+                                      decoration-warning="achievement_rate &gt;= 50 and achievement_rate &lt; 80"
+                                      decoration-success="achievement_rate &gt;= 100">
+
+                                    <field name="industry_id" required="1"/>
+                                    <field name="month" required="1"/>
+                                    <field name="year" readonly="1"/>
+                                    <field name="target_amount" sum="Total Target"/>
+                                    <field name="achieved_amount"
+                                           readonly="1"
+                                           sum="Total Achieved"/>
+                                    <field name="gap_amount"
+                                           readonly="1"
+                                           sum="Total Gap"/>
+                                    <field name="achievement_rate"
+                                           readonly="1"
+                                           widget="progressbar"
+                                           options="{'max_value': 100, 'editable': false}"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes_page">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         WINDOW ACTION — sale.target
+         ================================================================ -->
+    <record id="sale_target_action" model="ir.actions.act_window">
+        <field name="name">Sales Target Plans</field>
+        <field name="res_model">sale.target</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="sale_target_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Sales Target Plan
+            </p>
+            <p>
+                Define billing targets by industry and month,
+                then track actual achievement from your sales orders.
+            </p>
+        </field>
+    </record>
+
+</odoo>
