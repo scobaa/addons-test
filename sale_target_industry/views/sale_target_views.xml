@@ -8,14 +8,13 @@
     <record id="sale_target_search_view" model="ir.ui.view">
         <field name="name">sale.target.search</field>
         <field name="model">sale.target</field>
+        <field name="priority">16</field>
         <field name="arch" type="xml">
             <search string="Search Target Plans">
                 <field name="name" string="Plan Name"/>
                 <field name="user_id" string="Responsible"/>
-                <field name="year" string="Year"/>
                 <field name="company_id" string="Company"/>
 
-                <!-- Quick filters -->
                 <filter name="filter_draft"
                         string="Draft"
                         domain="[('state', '=', 'draft')]"/>
@@ -25,14 +24,11 @@
                 <filter name="filter_done"
                         string="Done"
                         domain="[('state', '=', 'done')]"/>
-
-                <separator/>
                 <filter name="filter_my_plans"
                         string="My Plans"
                         domain="[('user_id', '=', uid)]"/>
 
-                <!-- Group by -->
-                <group expand="0" string="Group By">
+                <group expand="1" string="Group By" name="group_by">
                     <filter name="group_by_year"
                             string="Year"
                             context="{'group_by': 'year'}"/>
@@ -49,6 +45,7 @@
             </search>
         </field>
     </record>
+
 
     <!-- ================================================================
          LIST VIEW — sale.target
