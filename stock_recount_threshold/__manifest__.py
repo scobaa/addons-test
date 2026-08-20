@@ -25,7 +25,7 @@ recuentos disparados por actividad real de picking/consumo.
     'author': 'Tu nombre / Tu consultora',
     'website': '',
     'license': 'LGPL-3',
-    'depends': ['stock', 'mrp'],
+    'depends': ['stock', 'mrp', 'mail'],
     'data': [
         'security/ir.model.access.csv',
         'views/product_template_views.xml',

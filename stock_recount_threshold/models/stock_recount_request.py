@@ -5,6 +5,7 @@ from odoo import api, fields, models
 class StockRecountRequest(models.Model):
     _name = 'stock.recount.request'
     _description = 'Solicitud de recuento por umbral'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
     _rec_name = 'product_id'
 
