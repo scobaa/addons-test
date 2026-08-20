@@ -222,6 +222,7 @@ class SaleTargetLine(models.Model):
     # -------------------------------------------------------------------------
     # Display name  (Odoo 17+: override display_name instead of name_get)
     # -------------------------------------------------------------------------
+    @api.depends('industry_id.name', 'month', 'year')
     def _compute_display_name(self):
         """Custom display name: 'Industry — Month Year'."""
         for line in self:
@@ -229,3 +230,4 @@ class SaleTargetLine(models.Model):
             line.display_name = (
                 f'{line.industry_id.name or "?"} — {month_label} {line.year}'
             )
+

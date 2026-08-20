@@ -8,13 +8,14 @@
     <record id="sale_target_search_view" model="ir.ui.view">
         <field name="name">sale.target.search</field>
         <field name="model">sale.target</field>
-        <field name="priority">16</field>
         <field name="arch" type="xml">
             <search string="Search Target Plans">
-                <field name="name" string="Plan Name"/>
-                <field name="user_id" string="Responsible"/>
-                <field name="company_id" string="Company"/>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="year"/>
+                <field name="company_id" groups="base.group_multi_company"/>
 
+                <!-- Quick filters -->
                 <filter name="filter_draft"
                         string="Draft"
                         domain="[('state', '=', 'draft')]"/>
@@ -24,11 +25,14 @@
                 <filter name="filter_done"
                         string="Done"
                         domain="[('state', '=', 'done')]"/>
+
+                <separator/>
                 <filter name="filter_my_plans"
                         string="My Plans"
                         domain="[('user_id', '=', uid)]"/>
 
-                <group expand="1" string="Group By" name="group_by">
+                <!-- Group by -->
+                <group expand="0" string="Group By">
                     <filter name="group_by_year"
                             string="Year"
                             context="{'group_by': 'year'}"/>
@@ -40,12 +44,12 @@
                             context="{'group_by': 'state'}"/>
                     <filter name="group_by_company"
                             string="Company"
-                            context="{'group_by': 'company_id'}"/>
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
                 </group>
             </search>
         </field>
     </record>
-
 
     <!-- ================================================================
          LIST VIEW — sale.target
@@ -65,7 +69,7 @@
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="total_target_amount" sum="Total Target"/>
                 <field name="total_achieved_amount" sum="Total Achieved"/>
-                <field name="total_achievement_rate" string="Achievement (%)" sum="Avg Rate"/>
+                <field name="total_achievement_rate" string="Achievement (%)"/>
                 <field name="state"
                        widget="badge"
                        decoration-success="state == 'done'"
